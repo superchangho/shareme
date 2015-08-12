@@ -1,27 +1,34 @@
 package kakao.main;
 
-import java.util.HashMap;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import kakao.common.Log;
 import kakao.common.commonData;
 import kakao.data.SortingManager;
 import kakao.data.SortingManagerImplementation;
 import kakao.data.StorageManager;
 import kakao.data.StorageManagerImplementation;
+import kakao.data.sortingData;
 import kakao.redis.RedisReadHandler;
 import kakao.redis.RedisResultCode;
 import kakao.redis.RedisWriteHandler;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import com.google.gson.Gson;
 
 
 /**
@@ -127,7 +134,17 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler
 						e.printStackTrace();
 					}
 				break;
-
+				case "/getlist.json":
+					try 
+					{
+						getList(request);
+					} 
+					catch (Exception e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				break;
 				default:
 					break;
 				}
@@ -173,6 +190,14 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler
 		storagemanager.GetMasterDB().WriteIfNotExistInHashMap("list", mMap.get("url"), data.toString(), writeHandler, null);
 	}
 	
+	private void getList(HttpServerRequest request) throws Exception
+	{
+		List<sortingData> sortedList = sortingmanager.getSortedList();
+		HttpServerResponse response = request.response();
+		String json = new Gson().toJson(sortedList);
+		response.end(json);
+	}
+	
 	private void inputpage(HttpServerRequest request)
 	{
 		request.response().sendFile("webroot/input.html");
@@ -196,5 +221,5 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 }
