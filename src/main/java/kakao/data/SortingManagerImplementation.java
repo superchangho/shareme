@@ -28,6 +28,7 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 	private StorageManager storagemanager;
 	private HashMap<String, String> Result = new HashMap<String, String>();
 	private HashMap<String, sortingData> Data = new HashMap<String, sortingData>();
+	java.util.List<sortingData> list = new ArrayList<sortingData>();
 	
 	
 	@Override
@@ -88,9 +89,9 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 		
 	}
 	
-	public java.util.List<sortingData> changeToList(HashMap<String, sortingData> map)
+	public void changeToList(HashMap<String, sortingData> map)
 	{
-		java.util.List<sortingData> list = new ArrayList<sortingData>();
+		list.clear();
 		for(Iterator<Map.Entry<String, sortingData>> i = map.entrySet().iterator(); i.hasNext();)
 		{
 			Map.Entry<String, sortingData> entry = i.next();
@@ -98,7 +99,11 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 		}
 		
 		Collections.sort(list, new LikeComparator());
-		
+	}
+	
+	@Override
+	public java.util.List<sortingData> getSortedList()
+	{
 		return list;
 	}
 	

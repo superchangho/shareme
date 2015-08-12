@@ -6,4 +6,5 @@ public interface SortingManager
 {
 	void Init(Vertx vertx, StorageManager storagemanager);
 	void Sorting();
+	java.util.List<sortingData> getSortedList();
 }
