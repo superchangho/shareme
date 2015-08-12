@@ -40,7 +40,7 @@
 	<div class="input-group">
 		<input type="text" class="form-control" placeholder="함께 읽고 싶은 글을 추천해주세요.">
 		<span class="input-group-btn">
-			<button class="btn btn-default" type="button" onclick="saveUrl()">링크 추천하기</button>
+			<button id="btnRecommend" class="btn btn-default" type="button">링크 추천하기</button>
 		</span>
 	</div>
 	<!-- /input-group -->
@@ -53,6 +53,8 @@
 
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script id="angularScript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.min.js"></script>
 <script>
 function saveUrl() {
 	$.get("/saveurl.json", {url:$("#txtUrl").val()}, function(){
@@ -60,26 +62,41 @@ function saveUrl() {
 	});
 }
 
+/*
 var list = [
-{"link":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548505", "title":"서울대 페미니스트", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
-{"link":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548500", "title":"세상에서 가장 슬픈 낙서", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
-{"link":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548497", "title":"의사가 밖에서 사람 구하면 안되는 이유.jpg", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
-{"link":"http://www.todayhumor.co.kr/board/view.php?table=bestofbest&no=216212&s_no=216212&page=1", "title":"최정문은 왜 지니어스에서 박쥐가 될수밖에 없었는가.jpg (스압)", "smry":"최정문이 7화에서 아웃되면서	양다리걸치는 스파이, 박쥐라고 엄청나게 까이고 있다.", "img":"http://thimg.todayhumor.co.kr/upfile/201508/14392073758eGhmDw3pdFdaIDxkjCmGo5sfS15.jpg"},
+{"url":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548505", "title":"서울대 페미니스트", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
+{"url":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548500", "title":"세상에서 가장 슬픈 낙서", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
+{"url":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548497", "title":"의사가 밖에서 사람 구하면 안되는 이유.jpg", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
+{"url":"http://www.todayhumor.co.kr/board/view.php?table=bestofbest&no=216212&s_no=216212&page=1", "title":"최정문은 왜 지니어스에서 박쥐가 될수밖에 없었는가.jpg (스압)", "smry":"최정문이 7화에서 아웃되면서	양다리걸치는 스파이, 박쥐라고 엄청나게 까이고 있다.", "img":"http://thimg.todayhumor.co.kr/upfile/201508/14392073758eGhmDw3pdFdaIDxkjCmGo5sfS15.jpg"},
 ];
+*/
+var list = [];
+
+function loadList() {
+	list = [];
+	$.get('/getlist.json', {}, function(res){
+		list = $.parseJSON(res);
+		
+		var welList = $("._contentlist");
+		for(var i = 0; i < list.length; i++) {
+			var html = "";
+			html += '<a href="' + list[i].url + '" class="list-group-item">';
+			html += '<h4 class="list-group-item-heading">' + list[i].title + '</h4>';
+			if (list[i].img) {
+				html += '<img src="' + list[i].img + '" width="160" height="120">';
+			}
+			html += '<p class="list-group-item-text">' + list[i].summary + '</p>';
+			html += "</a>";
+			welList.append(html);
+		}
+	});
+}
+
 
 $(document).ready(function() {
-	var welList = $("._contentlist");
-	for(var i = 0; i < list.length; i++) {
-		var html = "";
-		html += '<a href="' + list[i].link + '" class="list-group-item">';
-		html += '<h4 class="list-group-item-heading">' + list[i].title + '</h4>';
-		if (list[i].img) {
-			html += '<img src="' + list[i].img + '" width="160" height="120">';
-		}
-		html += '<p class="list-group-item-text">' + list[i].smry + '</p>';
-		html += "</a>";
-		welList.append(html);
-	}
+	loadList();
+	
+	$("#btnRecommend").click(saveUrl);
 });
 
 </script>

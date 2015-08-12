@@ -9,4 +9,6 @@ public class sortingData
 	public String title;
 	public String url;
 	public long like;
+	public String summary;
+	public String img;
 }
