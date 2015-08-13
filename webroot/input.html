@@ -102,20 +102,23 @@ function drawList() {
 		var wel = $(html);
 		welList.append(wel);
 		
-		// 카카오 로그인 버튼을 생성합니다.
-		Kakao.Link.createTalkLinkButton({
-		  container: '#' + linkBtnId,
-		  label: list[i].title,
-		  image: {
-		    src: 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
-		    width: '300',
-		    height: '200'
-		  },
-		  webButton: {
-		    text: 'Share Me',
-		    url: 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
-		  }
-		});
+		try {
+			// 카카오 로그인 버튼을 생성합니다.
+			Kakao.Link.createTalkLinkButton({
+			  container: '#' + linkBtnId,
+			  label: list[i].title,
+			  image: {
+			    src: 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
+			    width: '300',
+			    height: '200'
+			  },
+			  webButton: {
+			    text: 'Share Me',
+			    url: 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
+			  }
+			});
+		} catch (e) {
+		}
 	}
 }
 
