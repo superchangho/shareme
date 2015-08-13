@@ -12,7 +12,6 @@
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="http://superchangho.github.io/js/jquery.xdomainajax.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script>
@@ -61,11 +60,6 @@ Kakao.init('8d69e216872707f3d5da75f1f2c0fdbf');
         </div><!-- /.col-sm-4 -->
 
 <script>
-function saveUrl() {
-	$.get("/saveurl.json", {url:$("#txtUrl").val()}, function(){
-		alert("save");
-	});
-}
 /*
 var list = [
 {"url":"http://web.humoruniv.com/board/humor/read.html?table=pds&pg=0&number=548505", "title":"서울대 페미니스트", "smry":"짜장면이 맛있다더라 고구마가 맛있냐"},
@@ -75,21 +69,40 @@ var list = [
 ];
 */
 var list = [];
+var baseUrl = "";//"http://52.20.231.141:8181";
+
+function saveUrl() {
+	$.ajax({
+		url : baseUrl + '/saveurl.json',
+		data : {url:$.trim($("#txtUrl").val())},
+		type : "GET",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		complete : function(res) {
+			alert("save");
+		} 
+	});
+}
 
 function loadList() {
 	list = [];
-	$.get('/getlist.json', {}, function(res){
-		list = $.parseJSON(res);
-		drawList();
+	$.ajax({
+		url : baseUrl + '/getlist.json',
+		type : "GET",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		complete : function(res) {
+			var json = $.parseJSON(res.responseText);
+			list = json;
+			drawList();
+		} 
 	});
 }
 
 function drawList() {
 	var welList = $("._contentlist");
-	for(var i = 0; i < list.length; i++) {
+	for (var i = 0; i < list.length; i++) {
 		var html = "";
 		var linkBtnId = "kakao-link-btn" + i;
-		html += '<a href="' + list[i].url + '" class="list-group-item">';
+		html += '<a href="' + list[i].url + '" class="list-group-item" target="_blank">';
 		html += '<h4 class="list-group-item-heading">' + list[i].title + '</h4>';
 		if (list[i].img) {
 			html += '<img src="' + list[i].img + '" width="160" height="120">';
@@ -101,34 +114,31 @@ function drawList() {
 		html += '</a>';
 		var wel = $(html);
 		welList.append(wel);
-		
+
 		try {
 			// 카카오 로그인 버튼을 생성합니다.
 			Kakao.Link.createTalkLinkButton({
-			  container: '#' + linkBtnId,
-			  label: list[i].title,
-			  image: {
-			    src: 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
-			    width: '300',
-			    height: '200'
-			  },
-			  webButton: {
-			    text: 'Share Me',
-			    url: 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
-			  }
+				container : '#' + linkBtnId,
+				label : list[i].title,
+				image : {
+					src : 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
+					width : '300',
+					height : '200'
+				},
+				webButton : {
+					text : 'Share Me',
+					url : 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
+				}
 			});
 		} catch (e) {
 		}
 	}
 }
 
-
 $(document).ready(function() {
 	loadList();
-	
 	$("#btnRecommend").click(saveUrl);
 });
-
 </script>
 </body>
 </html>

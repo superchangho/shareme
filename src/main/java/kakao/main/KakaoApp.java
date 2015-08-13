@@ -26,6 +26,7 @@ import kakao.redis.RedisWriteHandler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
 
@@ -156,6 +157,8 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler {
 		storagemanager.GetMasterDB().WriteIfNotExistInHashMap("list", mMap.get("url"), data.toString(), writeHandler, null);
 		
 		HttpServerResponse response = request.response();
+		response.putHeader("Access-Control-Allow-Origin", "*");
+		
 		JsonObject result = new JsonObject();
 		result.put("result", true);
 		response.end(result.toString());
@@ -164,6 +167,7 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler {
 	private void getList(HttpServerRequest request) throws Exception {
 		List<sortingData> sortedList = sortingmanager.getSortedList();
 		HttpServerResponse response = request.response();
+		response.putHeader("Access-Control-Allow-Origin", "*");
 		String json = new Gson().toJson(sortedList);
 		response.end(json);
 	}
