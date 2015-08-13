@@ -169,10 +169,12 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler {
 	}
 
 	private void inputpage(HttpServerRequest request) {
+		Log.Info("Request input page");
 		request.response().sendFile("webroot/input.html");
 	}
 
 	private void indexpage(HttpServerRequest request) {
+		Log.Info("Request index page");
 		request.response().sendFile("webroot/index.html");
 	}
 

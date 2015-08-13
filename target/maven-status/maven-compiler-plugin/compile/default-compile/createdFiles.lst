@@ -1,6 +1,7 @@
 kakao/redis/RedisWriteHandler.class
 kakao/main/KakaoApp$2.class
 kakao/redis/listdatahandler.class
+kakao/data/SortingManagerImplementation$LikeComparator.class
 kakao/redis/RedisModuleImplementation$2.class
 kakao/data/SortingManagerImplementation$FutureHandler.class
 kakao/redis/RedisModuleImplementation$3.class
@@ -20,6 +21,7 @@ kakao/main/KakaoApp$timerHandler.class
 kakao/redis/RedisModuleImplementation$1.class
 kakao/redis/RedisModuleImplementation.class
 kakao/redis/RedisRemoveHandler.class
+kakao/data/sortingData.class
 kakao/redis/RedisReadHandler.class
 kakao/redis/RedisModule.class
 kakao/data/StorageManagerImplementation.class
