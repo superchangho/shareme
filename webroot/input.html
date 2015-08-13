@@ -72,8 +72,14 @@ var list = [];
 var baseUrl = "";//"http://52.20.231.141:8181";
 
 function saveUrl() {
-	$.get(baseUrl + "/saveurl.json", {url:$("#txtUrl").val()}, function(){
-		alert("save");
+	$.ajax({
+		url : baseUrl + '/saveurl.json',
+		data : {url:$.trim($("#txtUrl").val())},
+		type : "GET",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		complete : function(res) {
+			alert("save");
+		} 
 	});
 }
 
@@ -97,13 +103,11 @@ function drawList() {
 		var html = "";
 		var linkBtnId = "kakao-link-btn" + i;
 		html += '<a href="' + list[i].url + '" class="list-group-item" target="_blank">';
-		html += '<h4 class="list-group-item-heading">' + list[i].title
-				+ '</h4>';
+		html += '<h4 class="list-group-item-heading">' + list[i].title + '</h4>';
 		if (list[i].img) {
 			html += '<img src="' + list[i].img + '" width="160" height="120">';
 		}
-		html += '<p class="list-group-item-text">' + list[i].summary
-				+ '</p>';
+		html += '<p class="list-group-item-text">' + list[i].summary + '</p>';
 		html += "</a>";
 		html += '<a id="' + linkBtnId + '" href="javascript:;">';
 		html += '<img src="http://dn.api1.kage.kakao.co.kr/14/dn/btqa9B90G1b/GESkkYjKCwJdYOkLvIBKZ0/o.jpg" width="40" height="40"/>';
@@ -113,20 +117,19 @@ function drawList() {
 
 		try {
 			// 카카오 로그인 버튼을 생성합니다.
-			Kakao.Link
-					.createTalkLinkButton({
-						container : '#' + linkBtnId,
-						label : list[i].title,
-						image : {
-							src : 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
-							width : '300',
-							height : '200'
-						},
-						webButton : {
-							text : 'Share Me',
-							url : 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
-						}
-					});
+			Kakao.Link.createTalkLinkButton({
+				container : '#' + linkBtnId,
+				label : list[i].title,
+				image : {
+					src : 'http://dn.api1.kage.kakao.co.kr/14/dn/btqaWmFftyx/tBbQPH764Maw2R6IBhXd6K/o.jpg',
+					width : '300',
+					height : '200'
+				},
+				webButton : {
+					text : 'Share Me',
+					url : 'https://superchangho.github.io' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
+				}
+			});
 		} catch (e) {
 		}
 	}
