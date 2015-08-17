@@ -10,6 +10,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import kakao.redis.RedisWriteHandler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
@@ -125,17 +127,31 @@ public class KakaoApp extends AbstractVerticle implements RedisReadHandler {
 	private void savepage(HttpServerRequest request) throws Exception {
 		MultiMap mMap = request.params();
 		Document doc = Jsoup.connect(mMap.get("url")).get();
+		Elements img = doc.getElementsByTag("img");
+		
+		String image = null;
+		
+		for(Element elem : img)
+		{
+			String src = elem.absUrl("src");
+			if(src != null)
+			{
+				image = src;
+				break;
+			}
+		}
 
 		String title = doc.title();
 		String summary = doc.title();
-		String image = doc.title();
 
 		JsonObject data = new JsonObject();
 		data.put("title", title);
 		data.put("summary", summary);
 		data.put("image", image);
 		data.put("url", mMap.get("url"));
-		data.put("like", 0);
+		data.put("sharecount", 0);
+		
+		sortingmanager.AddRecentList(data);
 
 		RedisWriteHandler writeHandler = new RedisWriteHandler() {
 			@Override

@@ -1,16 +1,12 @@
 package kakao.data;
 
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
-
-import com.hazelcast.nio.serialization.Data;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -18,18 +14,18 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import kakao.redis.RedisEvalHandler;
-import kakao.redis.RedisResultCode;
 import kakao.redis.listdatahandler;
+import java.util.List;
+import java.util.Stack;
 
 public class SortingManagerImplementation implements SortingManager, listdatahandler
 {
 	private Vertx vertx;
 	private StorageManager storagemanager;
-	private HashMap<String, String> Result = new HashMap<String, String>();
 	private HashMap<String, sortingData> Data = new HashMap<String, sortingData>();
-	java.util.List<sortingData> list = new ArrayList<sortingData>();
-	
+	List<sortingData> list = new ArrayList<sortingData>();
+	Stack<JsonObject> recentlist = new Stack<JsonObject>();
+
 	
 	@Override
 	public void Init(Vertx vertx, StorageManager storagemanager) 
@@ -79,15 +75,15 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 		vertx.executeBlocking(codeHandler, resultHander);
 	}
 	
-	class LikeComparator implements Comparator
+	class ShareCountComparator implements Comparator
 	{
 		@Override
 		public int compare(Object a, Object b) 
 		{
-			return ((sortingData)a).like > ((sortingData)b).like ? 1: 0;
+			return ((sortingData)a).sharecount > ((sortingData)b).sharecount ? 1: 0;
 		}
 		
-	}
+	}	
 	
 	public void changeToList(HashMap<String, sortingData> map)
 	{
@@ -98,7 +94,7 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 			list.add(entry.getValue());
 		}
 		
-		Collections.sort(list, new LikeComparator());
+		Collections.sort(list, new ShareCountComparator());
 	}
 	
 	@Override
@@ -115,12 +111,32 @@ public class SortingManagerImplementation implements SortingManager, listdatahan
 		for(Iterator<Map.Entry<String, String>> i = result.entrySet().iterator(); i.hasNext();)
 		{
 			Map.Entry<String, String> entry = i.next();
-			JsonObject test = new JsonObject();
 			sortingData tData = Json.decodeValue(entry.getValue(), sortingData.class);
 			Data.put(tData.url, tData);
 		}
 		
 		changeToList(Data);
+	}
+
+
+	@Override
+	public void AddRecentList(JsonObject object) 
+	{
+		recentlist.push(object);
+	}
+	
+	@Override
+	public List<sortingData> getRecentList()
+	{
+		List<sortingData> list = new ArrayList<sortingData>();
+		
+		for(JsonObject entry : recentlist)
+		{
+			sortingData test = Json.decodeValue(entry.toString(), sortingData.class);
+			list.add(test);
+		}
+		
+		return list;
 	}
 
 }

@@ -10,5 +10,5 @@ public class sortingData
 	public String summary;
 	public String image;
 	public String url;
-	public long like;
+	public long sharecount;
 }

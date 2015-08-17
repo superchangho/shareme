@@ -15,6 +15,6 @@ public final class commonData
 	public static long GetCurrentTime()
 	{
 		Date now = new Date();
-		return now.getTime();
+		return now.getTime() / 1000;
 	}
 }
